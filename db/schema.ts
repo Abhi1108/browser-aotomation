@@ -13,3 +13,7 @@ export const workflows = pgTable("workflows", {
     .notNull()
     .$onUpdate(() => new Date()),
 })
+
+export type Workflow = typeof workflows.$inferSelect
+export type NewWorkflow = typeof workflows.$inferInsert
+export type WorkflowListItem = Pick<Workflow, "id" | "name" | "updatedAt">
