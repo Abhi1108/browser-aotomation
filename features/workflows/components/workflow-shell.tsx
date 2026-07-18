@@ -1,5 +1,6 @@
 "use client"
 
+import { Canvas } from "@/features/workflows/components/canvas"
 import { RightSidebar } from "@/features/workflows/components/right-sidebar"
 import {
   ResizableHandle,
@@ -17,9 +18,7 @@ export function WorkflowShell({ workflowId }: { workflowId: string }) {
       <ResizablePanel minSize="30rem" className="min-h-0">
         <ResizablePanelGroup orientation="vertical" className="size-full">
           <ResizablePanel minSize="18rem" className="min-h-0">
-            <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
-              Canvas
-            </div>
+            <Canvas />
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize="8rem" minSize="6rem" className="min-h-0">
