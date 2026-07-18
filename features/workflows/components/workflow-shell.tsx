@@ -1,5 +1,6 @@
 "use client"
 
+import { RightSidebar } from "@/features/workflows/components/right-sidebar"
 import {
   ResizableHandle,
   ResizablePanel,
@@ -35,9 +36,7 @@ export function WorkflowShell({ workflowId }: { workflowId: string }) {
         maxSize="36rem"
         className="min-h-0"
       >
-        <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
-          Inspector
-        </div>
+        <RightSidebar />
       </ResizablePanel>
     </ResizablePanelGroup>
   )
