@@ -1,42 +1,21 @@
-"use client"
-
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
-import { PlusIcon, WorkflowIcon } from "lucide-react"
 
+import { WorkflowNav } from "@/features/workflows/components/workflow-nav"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupAction,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-
-const workflows = [
-  "dominant-wasp",
-  "honest-reindeer",
-  "expected-llama",
-  "essential-ocelot",
-  "creepy-echidna",
-  "eastern-silkworm",
-  "cultural-lion",
-  "proud-weasel",
-  "regional-bonobo",
-]
 
 export function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" variant="inset" {...props}>
-      <SidebarHeader className="flex-row items-center gap-1">
+      <SidebarHeader className="flex-row items-center gap-1 group-data-[collapsible=icon]:justify-center">
         <div className="flex min-w-0 flex-1 items-center group-data-[collapsible=icon]:hidden">
           <OrganizationSwitcher
             hidePersonal
@@ -52,32 +31,14 @@ export function AppSidebar({
             }}
           />
         </div>
-        <SidebarTrigger className="ml-auto" />
+        <SidebarTrigger className="ml-auto group-data-[collapsible=icon]:ml-0" />
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Workflows</SidebarGroupLabel>
-          <SidebarGroupAction title="New workflow">
-            <PlusIcon />
-            <span className="sr-only">New workflow</span>
-          </SidebarGroupAction>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {workflows.map((workflow) => (
-                <SidebarMenuItem key={workflow}>
-                  <SidebarMenuButton tooltip={workflow}>
-                    <WorkflowIcon />
-                    <span>{workflow}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <WorkflowNav />
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="group-data-[collapsible=icon]:hidden">
         <UserButton
           appearance={{
             elements: {

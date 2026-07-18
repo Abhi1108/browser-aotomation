@@ -122,9 +122,10 @@
     @apply border-border outline-ring/50;
     }
   html {
-    @apply h-full font-sans;
+    @apply h-full overflow-x-auto overflow-y-hidden font-sans;
     }
   body {
-    @apply h-full overflow-hidden bg-background text-foreground;
+    /* Desktop + tablet (iPad portrait ~820px). Phones scroll horizontally. */
+    @apply h-full min-w-[768px] overflow-hidden bg-background text-foreground;
     }
 }
