@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 
+import { WorkflowShell } from "@/features/workflows/components/workflow-shell"
 import { getWorkflow } from "@/features/workflows/data"
 
 export default async function WorkflowPage({
@@ -15,16 +16,8 @@ export default async function WorkflowPage({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto p-6">
-      <div>
-        <h1 className="font-heading text-lg font-medium tracking-tight">
-          {workflow.name}
-        </h1>
-        <p className="text-sm text-muted-foreground">ID: {workflow.id}</p>
-      </div>
-      <pre className="overflow-auto rounded-lg bg-muted p-4 text-xs">
-        {JSON.stringify(workflow.graph, null, 2)}
-      </pre>
+    <div className="min-h-0 flex-1">
+      <WorkflowShell workflowId={workflow.id} />
     </div>
   )
 }
