@@ -30,13 +30,13 @@ export default function RootLayout({
         geist.variable
       )}
     >
-      <body>
+      <body className="flex h-full flex-col">
         <ClerkProvider
           appearance={{ theme: shadcn }}
           taskUrls={{ "choose-organization": "/choose-organization" }}
         >
           <ThemeProvider>
-            {children}
+            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
             <Toaster />
           </ThemeProvider>
         </ClerkProvider>

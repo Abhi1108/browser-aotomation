@@ -4,6 +4,6 @@ export default function ChooseOrganizationLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-svh items-center justify-center">{children}</div>
+    <div className="flex h-full items-center justify-center">{children}</div>
   )
 }
