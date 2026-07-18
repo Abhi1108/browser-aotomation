@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 
 import { db } from "@/db"
-import { workflows, type WorkflowListItem } from "@/db/schema"
+import { workflows, type Workflow, type WorkflowListItem } from "@/db/schema"
 
 export async function listWorkflows(): Promise<WorkflowListItem[]> {
   const { orgId } = await auth()
@@ -20,6 +20,22 @@ export async function listWorkflows(): Promise<WorkflowListItem[]> {
     .from(workflows)
     .where(eq(workflows.orgId, orgId))
     .orderBy(desc(workflows.updatedAt))
+}
+
+export async function getWorkflow(id: string): Promise<Workflow | null> {
+  const { orgId } = await auth()
+
+  if (!orgId) {
+    return null
+  }
+
+  const [workflow] = await db
+    .select()
+    .from(workflows)
+    .where(and(eq(workflows.id, id), eq(workflows.orgId, orgId)))
+    .limit(1)
+
+  return workflow ?? null
 }
 
 export async function createWorkflow({
