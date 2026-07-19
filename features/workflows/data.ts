@@ -3,6 +3,10 @@ import { and, desc, eq } from "drizzle-orm"
 
 import { db } from "@/db"
 import { workflows, type Workflow, type WorkflowListItem } from "@/db/schema"
+import {
+  createDefaultWorkflowGraph,
+  type WorkflowGraph,
+} from "@/features/workflows/nodes/graph"
 
 export async function listWorkflows(): Promise<WorkflowListItem[]> {
   const { orgId } = await auth()
@@ -40,10 +44,10 @@ export async function getWorkflow(id: string): Promise<Workflow | null> {
 
 export async function createWorkflow({
   name,
-  graph = {},
+  graph = createDefaultWorkflowGraph(),
 }: {
   name: string
-  graph?: Record<string, unknown>
+  graph?: WorkflowGraph
 }) {
   const { orgId } = await auth()
 

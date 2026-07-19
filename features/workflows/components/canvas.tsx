@@ -4,34 +4,34 @@ import { useCallback, useState } from "react"
 import { useTheme } from "next-themes"
 import {
   Background,
+  BackgroundVariant,
   Controls,
   ReactFlow,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
   type Connection,
-  type Edge,
   type EdgeChange,
-  type Node,
   type NodeChange,
 } from "@xyflow/react"
 
-const initialNodes: Node[] = [
-  { id: "n1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
-  { id: "n2", position: { x: 0, y: 100 }, data: { label: "Node 2" } },
-]
+import { StepNode } from "@/features/workflows/components/step-node"
+import {
+  normalizeWorkflowGraph,
+  type WorkflowGraph,
+} from "@/features/workflows/nodes/graph"
+import type { StepNodeType } from "@/features/workflows/nodes/node-registry"
 
-const initialEdges: Edge[] = [
-  { id: "n1-n2", source: "n1", target: "n2", type: "step" },
-]
+const nodeTypes = { step: StepNode }
 
-export function Canvas() {
+export function Canvas({ graph }: { graph: WorkflowGraph }) {
   const { resolvedTheme } = useTheme()
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  const initialGraph = normalizeWorkflowGraph(graph)
+  const [nodes, setNodes] = useState(initialGraph.nodes)
+  const [edges, setEdges] = useState(initialGraph.edges)
 
   const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
+    (changes: NodeChange<StepNodeType>[]) =>
       setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
     []
   )
@@ -54,12 +54,13 @@ export function Canvas() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
         defaultEdgeOptions={{ type: "step" }}
         colorMode={resolvedTheme === "dark" ? "dark" : "light"}
         fitView
       >
         <Controls />
-        <Background variant="dots" gap={12} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
     </div>
   )
