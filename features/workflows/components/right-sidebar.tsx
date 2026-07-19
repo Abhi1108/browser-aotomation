@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition, type ReactNode } from "react"
 import { MoreHorizontal, Play, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 
 import {
   Accordion,
@@ -22,15 +23,18 @@ import { Label } from "@/components/ui/label"
 import { ResizablePanel } from "@/components/ui/resizable"
 import { Spinner } from "@/components/ui/spinner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 
 import {
+  deleteWorkflowAction,
   getWorkflowRunStatusAction,
   runWorkflowAction,
   type WorkflowRunStatus,
 } from "@/features/workflows/actions"
 import {
   nodeRegistry,
+  getMissingRequiredFields,
   type NodeDefinition,
   type NodeField,
   type NodeType,
@@ -100,12 +104,26 @@ function FieldInput({
   value: string
   onChange: (value: string) => void
 }) {
-  // TODO: support a multiline field variant (textarea).
+  if (field.multiline) {
+    return (
+      <Textarea
+        id={field.key}
+        value={value}
+        placeholder={field.placeholder}
+        required={field.required}
+        aria-required={field.required}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    )
+  }
+
   return (
     <Input
       id={field.key}
       value={value}
       placeholder={field.placeholder}
+      required={field.required}
+      aria-required={field.required}
       onChange={(e) => onChange(e.target.value)}
     />
   )
@@ -113,6 +131,8 @@ function FieldInput({
 
 // The Editor tab: one input per field on the selected node, or an empty state.
 function Inspector({ node }: { node: StepNodeType | undefined }) {
+  const { updateNodeField } = useWorkflowFlow()
+
   if (!node) {
     return (
       <Section title="Editor">
@@ -134,13 +154,15 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
             <div key={field.key} className="flex flex-col gap-1.5">
               <Label htmlFor={field.key} className="text-xs">
                 {field.label}
+                {field.required ? (
+                  <span className="text-destructive"> *</span>
+                ) : null}
               </Label>
               <FieldInput
                 field={field}
                 value={values[field.key] ?? ""}
                 onChange={(value) => {
-                  // TODO: save the edit back onto the selected node.
-                  void value
+                  updateNodeField(node.id, field.key, value)
                 }}
               />
             </div>
@@ -211,11 +233,13 @@ function Palette() {
 // ---------------------------------------------------------------------------
 
 // The "..." menu for workflow-level actions.
-function ActionsMenu() {
+function ActionsMenu({ workflowId }: { workflowId: string }) {
+  const [isPending, startTransition] = useTransition()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="ghost">
+        <Button size="icon" variant="ghost" disabled={isPending}>
           <MoreHorizontal />
         </Button>
       </DropdownMenuTrigger>
@@ -223,8 +247,17 @@ function ActionsMenu() {
         <DropdownMenuItem
           variant="destructive"
           className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
+          disabled={isPending}
           onSelect={() => {
-            // TODO: delete the workflow, then navigate away.
+            startTransition(async () => {
+              try {
+                await deleteWorkflowAction(workflowId)
+              } catch (err) {
+                toast.error(
+                  err instanceof Error ? err.message : "Failed to delete workflow"
+                )
+              }
+            })
           }}
         >
           <Trash2 />
@@ -281,16 +314,20 @@ function RunButton({
 // The sidebar itself — header on top, then the Toolbar / Editor tabs.
 // ---------------------------------------------------------------------------
 
-export function RightSidebar() {
+export function RightSidebar({ workflowId }: { workflowId: string }) {
   const [tab, setTab] = useState("toolbar")
   const [isPending, startTransition] = useTransition()
   const [run, setRun] = useState<WorkflowRunStatus | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const { nodes } = useWorkflowFlow()
 
-  // TODO: read the currently selected node from React Flow.
-  const selected: StepNodeType | undefined = undefined
+  const selected = nodes.find((node) => node.selected)
 
-  // TODO: auto-switch to the Editor tab when the selection changes.
+  useEffect(() => {
+    if (selected) {
+      setTab("editor")
+    }
+  }, [selected?.id])
 
   const isRunning = isPending || (run != null && !run.isCompleted)
 
@@ -326,6 +363,18 @@ export function RightSidebar() {
 
   function handleRun() {
     setError(null)
+
+    for (const node of nodes) {
+      const missing = getMissingRequiredFields(node)
+      if (missing.length > 0) {
+        const labels = missing.map((field) => field.label).join(", ")
+        const message = `${node.data.title} is missing required: ${labels}`
+        setError(message)
+        toast.error(message)
+        return
+      }
+    }
+
     startTransition(async () => {
       try {
         const next = await runWorkflowAction()
@@ -347,7 +396,7 @@ export function RightSidebar() {
       <Tabs value={tab} onValueChange={setTab} className="size-full gap-0">
         <div className="flex flex-col gap-2 border-b border-border p-2">
           <div className="flex items-center justify-between">
-            <ActionsMenu />
+            <ActionsMenu workflowId={workflowId} />
             <RunButton isRunning={isRunning} onRun={handleRun} />
           </div>
           {run ? (

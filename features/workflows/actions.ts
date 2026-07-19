@@ -5,7 +5,8 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 import { generateSlug } from "@/features/lib/generate-slug"
-import { createWorkflow } from "@/features/workflows/data"
+import { createWorkflow, deleteWorkflow } from "@/features/workflows/data"
+import { liveblocks, workflowRoomId } from "@/lib/liveblocks"
 import type { helloWorldTask } from "@/src/trigger/example"
 
 export type WorkflowRunStatus = {
@@ -29,6 +30,23 @@ export async function createWorkflowAction() {
 
   revalidatePath("/", "layout")
   redirect(`/workflows/${workflow.id}`)
+}
+
+export async function deleteWorkflowAction(workflowId: string) {
+  const deleted = await deleteWorkflow(workflowId)
+
+  if (!deleted) {
+    throw new Error("Failed to delete workflow")
+  }
+
+  try {
+    await liveblocks.deleteRoom(workflowRoomId(workflowId))
+  } catch {
+    // Room may already be gone; DB delete is the source of truth.
+  }
+
+  revalidatePath("/", "layout")
+  redirect("/")
 }
 
 export async function runWorkflowAction(): Promise<WorkflowRunStatus> {

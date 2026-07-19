@@ -3,16 +3,25 @@
 import { memo } from "react"
 import { Handle, Position, type NodeProps } from "@xyflow/react"
 
+import { Separator } from "@/components/ui/separator"
 import {
   nodeRegistry,
   type StepNodeType,
-} from "../nodes/node-registry"
+} from "@/features/workflows/nodes/node-registry"
 import { cn } from "@/lib/utils"
 
 function StepNodeComponent({ data, selected }: NodeProps<StepNodeType>) {
-  const { type, kind, title } = data
+  const { type, kind, title, values } = data
   const def = nodeRegistry[type]
   const Icon = def.icon
+
+  const entries = def.fields
+    .map((field) => {
+      const value = values[field.key]?.trim()
+      if (!value) return null
+      return { key: field.key, label: field.label, value }
+    })
+    .filter((entry) => entry != null)
 
   // A trigger starts the flow and takes no input, so it has no target handle.
   const hasTarget = kind !== "trigger"
@@ -44,6 +53,26 @@ function StepNodeComponent({ data, selected }: NodeProps<StepNodeType>) {
         </div>
         <span className="text-sm font-semibold">{title}</span>
       </div>
+
+      {entries.length > 0 ? (
+        <>
+          <Separator />
+          <div className="flex flex-col gap-1.5 px-3 py-2">
+            {entries.map((entry) => (
+              <p
+                key={entry.key}
+                className="flex items-baseline justify-between gap-3 truncate text-xs text-muted-foreground"
+                title={`${entry.label}: ${entry.value}`}
+              >
+                <span className="shrink-0 font-medium">{entry.label}</span>
+                <span className="min-w-0 truncate text-right text-foreground">
+                  {entry.value}
+                </span>
+              </p>
+            ))}
+          </div>
+        </>
+      ) : null}
 
       <Handle
         type="source"

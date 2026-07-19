@@ -36,6 +36,7 @@ type WorkflowFlowContextValue = {
   onConnect: OnConnect
   onDelete: OnDelete<StepNodeType, WorkflowEdge>
   addNodeType: (type: NodeType) => void
+  updateNodeField: (nodeId: string, key: string, value: string) => void
 }
 
 const WorkflowFlowContext = createContext<WorkflowFlowContextValue | null>(null)
@@ -101,6 +102,31 @@ export function WorkflowFlowProvider({
     [nodes, onNodesChange]
   )
 
+  const updateNodeField = useCallback(
+    (nodeId: string, key: string, value: string) => {
+      const node = nodes.find((item) => item.id === nodeId)
+      if (!node) return
+
+      onNodesChange([
+        {
+          type: "replace",
+          id: nodeId,
+          item: {
+            ...node,
+            data: {
+              ...node.data,
+              values: {
+                ...node.data.values,
+                [key]: value,
+              },
+            },
+          },
+        },
+      ])
+    },
+    [nodes, onNodesChange]
+  )
+
   const value = useMemo(
     () => ({
       nodes,
@@ -110,6 +136,7 @@ export function WorkflowFlowProvider({
       onConnect,
       onDelete,
       addNodeType,
+      updateNodeField,
     }),
     [
       nodes,
@@ -119,6 +146,7 @@ export function WorkflowFlowProvider({
       onConnect,
       onDelete,
       addNodeType,
+      updateNodeField,
     ]
   )
 
