@@ -1,5 +1,8 @@
 @import "tailwindcss";
 @import "../node_modules/@xyflow/react/dist/style.css" layer(base);
+@import "../node_modules/@liveblocks/react-ui/styles.css" layer(base);
+@import "../node_modules/@liveblocks/react-ui/styles/dark/attributes.css" layer(base);
+@import "../node_modules/@liveblocks/react-flow/styles.css" layer(base);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@clerk/ui/themes/shadcn.css";

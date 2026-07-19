@@ -7,6 +7,7 @@ import {
   createDefaultWorkflowGraph,
   type WorkflowGraph,
 } from "@/features/workflows/nodes/graph"
+import { ensureWorkflowRoom } from "@/lib/liveblocks"
 
 export async function listWorkflows(): Promise<WorkflowListItem[]> {
   const { orgId } = await auth()
@@ -69,6 +70,12 @@ export async function createWorkflow({
       createdAt: workflows.createdAt,
       updatedAt: workflows.updatedAt,
     })
+
+  await ensureWorkflowRoom({
+    workflowId: workflow.id,
+    orgId,
+    title: workflow.name,
+  })
 
   return workflow
 }

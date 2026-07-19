@@ -2,6 +2,7 @@
 
 import { Canvas } from "@/features/workflows/components/canvas"
 import { RightSidebar } from "@/features/workflows/components/right-sidebar"
+import { WorkflowRoom } from "@/features/workflows/components/workflow-room"
 import type { WorkflowGraph } from "@/features/workflows/nodes/graph"
 import {
   ResizableHandle,
@@ -17,33 +18,35 @@ export function WorkflowShell({
   graph: WorkflowGraph
 }) {
   return (
-    <ResizablePanelGroup
-      orientation="horizontal"
-      className="size-full"
-      id={`workflow-${workflowId}`}
-    >
-      <ResizablePanel minSize="30rem" className="min-h-0">
-        <ResizablePanelGroup orientation="vertical" className="size-full">
-          <ResizablePanel minSize="18rem" className="min-h-0">
-            <Canvas graph={graph} />
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel defaultSize="8rem" minSize="6rem" className="min-h-0">
-            <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
-              Logs
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </ResizablePanel>
-      <ResizableHandle />
-      <ResizablePanel
-        defaultSize="16rem"
-        minSize="14rem"
-        maxSize="36rem"
-        className="min-h-0"
+    <WorkflowRoom workflowId={workflowId}>
+      <ResizablePanelGroup
+        orientation="horizontal"
+        className="size-full"
+        id={`workflow-${workflowId}`}
       >
-        <RightSidebar />
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <ResizablePanel minSize="30rem" className="min-h-0">
+          <ResizablePanelGroup orientation="vertical" className="size-full">
+            <ResizablePanel minSize="18rem" className="min-h-0">
+              <Canvas graph={graph} />
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel defaultSize="8rem" minSize="6rem" className="min-h-0">
+              <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
+                Logs
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel
+          defaultSize="16rem"
+          minSize="14rem"
+          maxSize="36rem"
+          className="min-h-0"
+        >
+          <RightSidebar />
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </WorkflowRoom>
   )
 }
