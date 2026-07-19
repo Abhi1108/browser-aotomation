@@ -1,6 +1,8 @@
 import { auth, clerkClient } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
+import { colorFromId } from "@/lib/user-color"
+
 export async function POST(request: Request) {
   const { userId, orgId } = await auth()
 
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
           user.primaryEmailAddress?.emailAddress ||
           "User",
         avatar: user.imageUrl,
+        color: colorFromId(id),
       }
     })
   )

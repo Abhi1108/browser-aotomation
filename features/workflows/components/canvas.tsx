@@ -5,9 +5,11 @@ import {
   Background,
   BackgroundVariant,
   Controls,
+  Panel,
   ReactFlow,
 } from "@xyflow/react"
 import { Cursors, useLiveblocksFlow } from "@liveblocks/react-flow"
+import { AvatarStack } from "@liveblocks/react-ui"
 
 import { StepNode } from "@/features/workflows/components/step-node"
 import {
@@ -48,6 +50,9 @@ export function Canvas({ graph }: { graph: WorkflowGraph }) {
       >
         <Controls />
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+        <Panel position="top-right">
+          <AvatarStack size={28} variant="outline" max={5} />
+        </Panel>
         <Cursors />
       </ReactFlow>
     </div>

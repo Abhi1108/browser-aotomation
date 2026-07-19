@@ -38,14 +38,7 @@ export function WorkflowShell({
           </ResizablePanelGroup>
         </ResizablePanel>
         <ResizableHandle />
-        <ResizablePanel
-          defaultSize="16rem"
-          minSize="14rem"
-          maxSize="36rem"
-          className="min-h-0"
-        >
-          <RightSidebar />
-        </ResizablePanel>
+        <RightSidebar />
       </ResizablePanelGroup>
     </WorkflowRoom>
   )

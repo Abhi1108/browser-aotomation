@@ -1,16 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
 
 import { liveblocks } from "@/lib/liveblocks"
-
-function colorFromId(id: string) {
-  let hash = 0
-  for (let i = 0; i < id.length; i++) {
-    hash = id.charCodeAt(i) + ((hash << 5) - hash)
-  }
-
-  const hue = Math.abs(hash) % 360
-  return `hsl(${hue} 70% 45%)`
-}
+import { colorFromId } from "@/lib/user-color"
 
 export async function POST() {
   const { userId, orgId } = await auth()
