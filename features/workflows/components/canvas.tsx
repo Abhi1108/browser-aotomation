@@ -8,31 +8,18 @@ import {
   Panel,
   ReactFlow,
 } from "@xyflow/react"
-import { Cursors, useLiveblocksFlow } from "@liveblocks/react-flow"
+import { Cursors } from "@liveblocks/react-flow"
 import { AvatarStack } from "@liveblocks/react-ui"
 
 import { StepNode } from "@/features/workflows/components/step-node"
-import {
-  normalizeWorkflowGraph,
-  type WorkflowGraph,
-} from "@/features/workflows/nodes/graph"
+import { useWorkflowFlow } from "@/features/workflows/components/workflow-flow-provider"
 
 const nodeTypes = { step: StepNode }
 
-export function Canvas({ graph }: { graph: WorkflowGraph }) {
+export function Canvas() {
   const { resolvedTheme } = useTheme()
-  const initialGraph = normalizeWorkflowGraph(graph)
-
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onDelete } =
-    useLiveblocksFlow({
-      suspense: true,
-      nodes: {
-        initial: initialGraph.nodes,
-      },
-      edges: {
-        initial: initialGraph.edges,
-      },
-    })
+    useWorkflowFlow()
 
   return (
     <div className="size-full">

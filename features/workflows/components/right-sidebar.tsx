@@ -37,6 +37,7 @@ import {
   type StepNodeKind,
   type StepNodeType,
 } from "@/features/workflows/nodes/node-registry"
+import { useWorkflowFlow } from "@/features/workflows/components/workflow-flow-provider"
 
 // This file builds up to the RightSidebar component exported at the bottom: a
 // header with workflow actions (delete, run), then two tabs — a Toolbar for
@@ -165,10 +166,7 @@ const definitions = Object.values(nodeRegistry)
 
 // The Toolbar tab: a button per node type that adds it to the canvas.
 function Palette() {
-  const add = (type: NodeType) => {
-    // TODO: add the clicked node to the canvas (one trigger max).
-    void type
-  }
+  const { addNodeType } = useWorkflowFlow()
 
   return (
     <Section title="Toolbar">
@@ -193,7 +191,7 @@ function Palette() {
                   <Button
                     key={def.type}
                     variant="ghost"
-                    onClick={() => add(def.type as NodeType)}
+                    onClick={() => addNodeType(def.type as NodeType)}
                     className="justify-start gap-2.5 px-1.5 text-xs"
                   >
                     <NodeIcon type={def.type as NodeType} />

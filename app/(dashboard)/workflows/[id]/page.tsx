@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { notFound } from "next/navigation"
 
+import { WorkflowReactFlowProvider } from "@/features/workflows/components/workflow-react-flow-provider"
 import { WorkflowShell } from "@/features/workflows/components/workflow-shell"
 import { getWorkflow } from "@/features/workflows/data"
 import { normalizeWorkflowGraph } from "@/features/workflows/nodes/graph"
@@ -27,10 +28,12 @@ export default async function WorkflowPage({
 
   return (
     <div className="min-h-0 flex-1">
-      <WorkflowShell
-        workflowId={workflow.id}
-        graph={normalizeWorkflowGraph(workflow.graph)}
-      />
+      <WorkflowReactFlowProvider>
+        <WorkflowShell
+          workflowId={workflow.id}
+          graph={normalizeWorkflowGraph(workflow.graph)}
+        />
+      </WorkflowReactFlowProvider>
     </div>
   )
 }

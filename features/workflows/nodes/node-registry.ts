@@ -54,7 +54,11 @@ export type StepNodeType = Node<StepNodeData, "step">
 
 export function createStepNode(
   type: NodeType,
-  options: { id: string; position: { x: number; y: number } }
+  options: {
+    id: string
+    position: { x: number; y: number }
+    title?: string
+  }
 ): StepNodeType {
   const def = nodeRegistry[type]
 
@@ -65,7 +69,7 @@ export function createStepNode(
     data: {
       type: def.type as NodeType,
       kind: def.kind,
-      title: def.label,
+      title: options.title ?? def.label,
       values: Object.fromEntries(def.fields.map((field) => [field.key, ""])),
     },
   }

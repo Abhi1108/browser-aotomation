@@ -5,9 +5,11 @@ import {
   type StepNodeType,
 } from "@/features/workflows/nodes/node-registry"
 
+export type WorkflowEdge = Edge<Record<string, unknown>, "step">
+
 export type WorkflowGraph = {
   nodes: StepNodeType[]
-  edges: Edge[]
+  edges: WorkflowEdge[]
 }
 
 export function createDefaultWorkflowGraph(): WorkflowGraph {
